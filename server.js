@@ -1,16 +1,11 @@
-//npm start 
-//control c
 
 const express = require('express');
 const app = express(); 
 
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
     res.send('Hello you made a request'); 
-}); 
+});*/ 
 
-app.get('/about', (req, res)=> {
-    res.send('about me'); 
-}); 
 
 //1
 app.get('/greetings/:username', (req, res) => {
@@ -45,6 +40,7 @@ app.get('/collectibles/:index', (req, res) => {
     }); 
     
 //4
+
 const shoes = [
     { name: "Birkenstocks", price: 50, type: "sandal" },
     { name: "Air Jordans", price: 500, type: "sneaker" },
@@ -55,22 +51,40 @@ const shoes = [
     { name: "Fifty-Inch Heels", price: 175, type: "heel" }
 ];
 
+app.get('/shoes', (req,res) => {
+    res.send(shoes); 
+}); 
 
+app.get('/shoes/max/:maxPrice', (req, res) => {
+    const maxPrice = parseFloat(req.params.maxPrice); 
+    if (isNaN(maxPrice)) {
+        return res.status(400).send('Invalid maxPrice parameter'); 
+    }
+const maxList = shoes.filter(shoe => shoe.price < maxPrice);
+res.send(maxList); 
+}); 
 
-/*
-min-price: Excludes shoes below this price.
-max-price: Excludes shoes above this price.
-type: Shows only shoes of the specified type.
-No parameters: Responds with the full list of shoes.*/
+app.get('/shoes/min/:minPrice', (req, res) => {
+    const minPrice = parseFloat(req.params.minPrice);
+    if (isNaN(minPrice)) {
+        return res.status(400).send('Invalid minPrice parameter'); 
+    }
+    const minList = shoes.filter(shoe => shoe.price > minPrice); {
+        res.send(minList); 
+    }
+}); 
 
-
-
-app.get('*', (req,res) => {
-    res.status(404).send('error'); 
+app.get('/shoes/type/:typeSelect', (req, res) => {
+const typeSelect = req.params.typeSelect;  
+const typeList  = shoes.filter(shoe => shoe.type === typeSelect);   
+    res.send(typeList); 
 }); 
 
 
 
+app.get('*', (req,res) => {
+    res.status(404).send('Error: Page not found'); 
+}); 
 
 
 app.listen(3000, () => {
